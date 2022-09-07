@@ -1,44 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exemplo</title>
-</head>
-<body>
-  <span id="enunciado">Click para iniciar</span>
-  <button id="start-button">Iniciar</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exemplo</title>
+  </head>
+  <body>
+    <h1>Não faça nada por 2 minutos</h1>
+    <h4 id="timer"></h4>
 
-  <p id="timer"></p>
+    <script>
+      const body = document.getElementsByTagName("body")[0];
 
-  <h2 id="message">
-    <button id="navigation" disabled>Parabéns! Timer Zerado.</button>
-  </h2>
+      let timerSecs = 120;
+      let timerInterval = undefined;
+      const timerEl = document.getElementById("timer");
+      timerEl.innerText = secondsToTimerString(timerSecs);
 
-  <script>
-    const button = document.getElementById("start-button")
-    const navigation = document.getElementById("navigation")
+      let restTime = 3;
+      let restInterval = undefined;
 
-    button.addEventListener('click', function () {
-      let seconds = 80;
-      const timerEl = document.getElementById("timer")
-      timerEl.innerText = seconds + " s"
+      getRestInterval(restTime);
 
-      const interval = setInterval(function () {
-        seconds = seconds - 1
-        timerEl.innerText = seconds + " s"
-
-        if (seconds == 0) {
-          clearInterval(interval)
-          document.getElementById("navigation").disabled = false
+      function getRestInterval(rest) {
+        if (restInterval) {
+          resetAndUpdateAllTimers();
+          clearInterval(restInterval);
         }
-      }, 1000)
-    })
 
-    navigation.addEventListener('click', function () {
-      window.location = "/congrats.html"
-    })
-  </script>
-</body>
+        restInterval = setInterval(function () {
+          if (restTime == 0) {
+            getTimerInterval();
+            clearInterval(restInterval);
+          } else {
+            restTime -= 1;
+            console.log(restTime);
+          }
+
+          document.addEventListener("click", onUserAction);
+          document.addEventListener("keydown", onUserAction);
+          document.addEventListener("mousemove", onUserAction);
+        }, 1000);
+      }
+
+      function getTimerInterval() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+
+        timerInterval = setInterval(onUserWait, 1000);
+      }
+
+      function onUserAction() {
+        resetAndUpdateAllTimers();
+        clearInterval(timerInterval);
+
+        getRestInterval();
+      }
+
+      function onUserWait() {
+        timerSecs -= 1;
+        updateTimer();
+      }
+
+      function updateTimer() {
+        timerEl.innerText = secondsToTimerString(timerSecs);
+      }
+
+      function resetAndUpdateTimer() {
+        timerSecs = 120;
+        updateTimer();
+      }
+
+      function resetAndUpdateAllTimers() {
+        restTime = 3;
+        resetAndUpdateTimer();
+      }
+
+      function secondsToTimerString(s) {
+        const milliseconds = s * 1000
+
+        let seconds = Math.floor(milliseconds / 1000);
+        let minutes = Math.floor(seconds / 60);
+        let hours = Math.floor(minutes / 60);
+
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+
+        const sStr = seconds.toString().padStart(2, '0')
+        const mStr = minutes.toString().padStart(2, '0')
+        const hStr = hours.toString().padStart(2, '0')
+
+        return `${hStr}:${mStr}:${sStr}`;
+      }
+    </script>
+  </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemplo</title>
+</head>
+<body>
+  <span id="enunciado">Click para iniciar</span>
+  <button id="start-button">Iniciar</button>
+
+  <p id="timer"></p>
+
+  <h2 id="message">
+    <button id="navigation" disabled>Parabéns! Timer Zerado.</button>
+  </h2>
+
+  <script>
+    const button = document.getElementById("start-button")
+    const navigation = document.getElementById("navigation")
+
+    button.addEventListener('click', function () {
+      let seconds = 80;
+      const timerEl = document.getElementById("timer")
+      timerEl.innerText = seconds + " s"
+
+      const interval = setInterval(function () {
+        seconds = seconds - 1
+        timerEl.innerText = seconds + " s"
+
+        if (seconds == 0) {
+          clearInterval(interval)
+          document.getElementById("navigation").disabled = false
+        }
+      }, 1000)
+    })
+
+    navigation.addEventListener('click', function () {
+      window.location = "/congrats.html"
+    })
+  </script>
+</body>
+</html>
